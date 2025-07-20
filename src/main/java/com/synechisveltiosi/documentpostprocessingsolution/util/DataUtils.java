@@ -1,12 +1,15 @@
-package com.synechisveltiosi.springboottasks.util;
+package com.synechisveltiosi.documentpostprocessingsolution.util;
 
-import com.synechisveltiosi.springboottasks.model.entity.Document;
-import com.synechisveltiosi.springboottasks.model.entity.PrintOption;
+import com.synechisveltiosi.documentpostprocessingsolution.model.embed.Address;
+import com.synechisveltiosi.documentpostprocessingsolution.model.embed.PrintOption;
+import com.synechisveltiosi.documentpostprocessingsolution.model.entity.Document;
+import com.synechisveltiosi.documentpostprocessingsolution.model.enums.PayloadStatus;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class DataUtils {
 
@@ -40,7 +43,6 @@ public class DataUtils {
                 new Transaction(stackName, "081097", "2700", "0201234567", "Insured", "2086789012", LocalDateTime.now()),
                 new Transaction(stackName, "092108", "4300", "0212345678", "Agent", "2087890123", LocalDateTime.now()),
                 new Transaction(stackName, "092108", "4300", "0212345678", "Insured", "2087890123", LocalDateTime.now()),
-
                 new Transaction(stackName, "103219", "5900", "0223456789", "Agent", "2088901234", LocalDateTime.now()),
                 new Transaction(stackName, "103219", "5900", "0223456789", "Insured", "2088901234", LocalDateTime.now()),
                 new Transaction(stackName, "114320", "7500", "0234567890", "Agent", "2089012345", LocalDateTime.now()),
@@ -139,10 +141,6 @@ public class DataUtils {
                 .stream().map(transaction -> mapToDocumentAgentNumber("AE", transaction)).toList();
     }
 
-    public static List<Document> getDocumentIH() {
-        return getTransactions("IH")
-                .stream().map(transaction -> mapToDocumentRequestorID("IH", transaction)).toList();
-    }
 
     public static List<Document> getDocumentUS() {
         return getTransactions("US")
@@ -151,39 +149,51 @@ public class DataUtils {
 
     public static List<Document> getDocumentBS() {
         return getTransactions("BS")
-                .stream().map(transaction -> mapToDocumentRequestorID("BS", transaction)).toList();
+                .stream().map(transaction -> mapToDocumentAgentNumber("BS", transaction)).toList();
     }
 
     private static Document mapToDocumentAgentNumber(String stackName, Transaction transaction) {
         return Document.builder()
+                .stackName(stackName)
                 .agentNumber(transaction.agentNumber())
+                .requestorId(transaction.agentNumber())
                 .distributionBranch(transaction.distributionNumber())
                 .accountNumber(transaction.accountNumber())
                 .policyNumber(transaction.policyNumber())
                 .payload(DocumentParserUtils.getDocumentParser(transaction))
-                .createdDateTime(transaction.timestamp())
+                .timestamp(transaction.timestamp())
+                .address(buildAddress())
+                .payloadStatus(PayloadStatus.CREATED)
                 .printOption(buildPrintOptionWithStackName(stackName))
+                .build();
+    }
+
+    private static Address buildAddress() {
+        return Address.builder()
+                .line1(random.nextInt(1, 9999) + " " + new String[]{"Main", "Oak", "Maple", "Cedar", "Pine", "Elm", "Washington", "Lake", "Hill"}[random.nextInt(9)] + " " + new String[]{"Street", "Avenue", "Road", "Boulevard", "Lane", "Drive", "Way", "Circle", "Court"}[random.nextInt(9)])
+                .line2(random.nextBoolean() ? "Suite " + random.nextInt(1, 999) : null)
+                .city(new String[]{"New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose"}[random.nextInt(10)])
+                .state(new String[]{"NY", "CA", "IL", "TX", "AZ", "PA", "FL", "OH", "GA", "NC"}[random.nextInt(10)])
+                .zip(String.format("%05d", random.nextInt(100000)))
                 .build();
     }
 
     private static PrintOption buildPrintOptionWithStackName(String stackName) {
         return PrintOption.builder()
-                .deliveryMethodStackCode(stackName)
-                .payPlanForInsured(random.nextBoolean())
+                .stackCode(stackName)
+                .insuredCopyPayPlan(true)
+                .agentCopyPayPlan(true)
                 .payPlanWithCommissionForAgent(random.nextBoolean())
-                .ratingWorksheetForAgent(random.nextBoolean()).build();
-    }
-
-    private static Document mapToDocumentRequestorID(String stackName, Transaction transaction) {
-        return Document.builder()
-                .requestorId(transaction.accountNumber())
-                .distributionBranch(transaction.distributionNumber())
-                .accountNumber(transaction.accountNumber())
-                .policyNumber(transaction.policyNumber())
-                .payload(DocumentParserUtils.getDocumentParser(transaction))
-                .createdDateTime(transaction.timestamp())
-                .printOption(buildPrintOptionWithStackName(stackName))
-                .build();
+                .agentCopyCount(1)
+                .insuredCopyCount(1)
+                .printId(UUID.randomUUID().toString())
+                .suppressPrint(random.nextBoolean())
+                .canPrintFullPolicyDec(random.nextBoolean())
+                .handlingInstruction(random.nextBoolean())
+                .deliverInsuredSeparately(random.nextBoolean())
+                .insuredCopyPayPlan(random.nextBoolean())
+                .suppressAutoID(UUID.randomUUID().toString())
+                .ratingWorksheetForAgent(true).build();
     }
 
     public static String generateAgentNumber() {

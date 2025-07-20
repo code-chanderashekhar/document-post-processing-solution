@@ -1,4 +1,7 @@
 package com.synechisveltiosi.documentpostprocessingsolution.helper.model;
 
-public class BatchFileData {
+import lombok.Builder;
+
+@Builder
+public record BatchFileData(String batchNo, String batchSequenceNumber, String fileName, String bucketPath) {
 }

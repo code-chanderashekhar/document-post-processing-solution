@@ -1,4 +1,11 @@
 package com.synechisveltiosi.documentpostprocessingsolution.repository;
 
-public interface DocumentBatchTransactionRepository extends org.springframework.data.jpa.repository.JpaRepository<com.synechisveltiosi.documentpostprocessingsolution.model.entity.DocumentBatchTransaction, java.util.UUID> {
-  }
+import com.synechisveltiosi.documentpostprocessingsolution.model.entity.DocumentBatchTransaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface DocumentBatchTransactionRepository extends JpaRepository<DocumentBatchTransaction, UUID> {
+}

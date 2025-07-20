@@ -1,4 +1,11 @@
 package com.synechisveltiosi.documentpostprocessingsolution.repository;
 
-public interface DocumentRepository extends org.springframework.data.jpa.repository.JpaRepository<com.synechisveltiosi.documentpostprocessingsolution.model.entity.Document, java.util.UUID> {
-  }
+import com.synechisveltiosi.documentpostprocessingsolution.model.entity.Document;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface DocumentRepository extends JpaRepository<Document, UUID> {
+}

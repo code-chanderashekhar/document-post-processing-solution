@@ -1,4 +1,4 @@
-package com.synechisveltiosi.springboottasks.mapper;
+package com.synechisveltiosi.documentpostprocessingsolution.mapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

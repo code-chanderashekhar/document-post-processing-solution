@@ -1,23 +1,23 @@
 package com.synechisveltiosi.documentpostprocessingsolution.model.converter;
 
-import com.synechisveltiosi.documentpostprocessingsolution.model.enums.PayloadStatus;
+import com.synechisveltiosi.documentpostprocessingsolution.model.enums.BatchTransactionStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class PayloadStatusConverter implements AttributeConverter<PayloadStatus, String> {
+public class BatchTransactionStatusConverter implements AttributeConverter<BatchTransactionStatus, String> {
 
     private static final String NULL_CONVERT_OUTPUT = null;
 
     @Override
-    public String convertToDatabaseColumn(PayloadStatus payloadStatus) {
-        return payloadStatus != null ? String.valueOf(payloadStatus.getCharacterCode()) : NULL_CONVERT_OUTPUT;
+    public String convertToDatabaseColumn(BatchTransactionStatus payloadStatus) {
+        return payloadStatus != null ? String.valueOf(payloadStatus.getCode()) : NULL_CONVERT_OUTPUT;
     }
 
     @Override
-    public PayloadStatus convertToEntityAttribute(String databaseValue) {
-        return isNullOrEmpty(databaseValue) ? PayloadStatus.NONE
-                : PayloadStatus.fromCode(databaseValue.charAt(0));
+    public BatchTransactionStatus convertToEntityAttribute(String databaseValue) {
+        return isNullOrEmpty(databaseValue) ? BatchTransactionStatus.NONE
+                : BatchTransactionStatus.fromCode(databaseValue.charAt(0));
     }
 
     private boolean isNullOrEmpty(String value) {
