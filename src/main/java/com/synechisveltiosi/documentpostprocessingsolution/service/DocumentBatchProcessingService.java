@@ -137,9 +137,11 @@ public class DocumentBatchProcessingService {
             documentProcessor.getDocuments().addAll(agentDocBatchList);
         }
 
+        // barcode rest copy type override issue
         if (shouldProcessInsuredCopies(document)) {
+            Document copyDocForInsured = Document.copyOf(document);
             List<DocumentBatchFileDataRecord> insuredDocBatchList =
-                    processDocumentCopies(context, document.getPrintOption().getInsuredCopyCount(),
+                    processDocumentCopies(context, copyDocForInsured.getPrintOption().getInsuredCopyCount(),
                             documentProcessor::insuredRecipient);
             documentProcessor.getDocuments().addAll(insuredDocBatchList);
         }
@@ -177,7 +179,6 @@ public class DocumentBatchProcessingService {
                                     recipient,
                                     context.barcodeRestBarcode()))
                             .build();
-
                     context.document().getPayload().getDocument().setPrintMetadata(printMetadata);
                     context.document().setRecipient(recipient);
 

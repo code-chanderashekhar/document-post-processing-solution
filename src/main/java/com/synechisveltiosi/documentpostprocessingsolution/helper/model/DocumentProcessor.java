@@ -1,6 +1,8 @@
 package com.synechisveltiosi.documentpostprocessingsolution.helper.model;
 
 import com.synechisveltiosi.documentpostprocessingsolution.constants.AppConstants;
+import com.synechisveltiosi.documentpostprocessingsolution.helper.handler.AEARUSGenerateBarcode;
+import com.synechisveltiosi.documentpostprocessingsolution.helper.handler.BSIHGenerateBarcode;
 import com.synechisveltiosi.documentpostprocessingsolution.helper.handler.BarcodeGunterHandler;
 import com.synechisveltiosi.documentpostprocessingsolution.helper.handler.BatchFileDataHandler;
 import com.synechisveltiosi.documentpostprocessingsolution.helper.processor.DocumentEnums;
@@ -12,8 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,7 +68,10 @@ public class DocumentProcessor {
     }
 
     public String generateBarcode() {
-        return "XXXX";
+        return switch (DocumentEnums.StackType.valueOf(stackCode)) {
+            case AE, AR, US -> new AEARUSGenerateBarcode().getBarcode();
+            case BS -> new BSIHGenerateBarcode().getBarcode();
+        };
     }
 
 

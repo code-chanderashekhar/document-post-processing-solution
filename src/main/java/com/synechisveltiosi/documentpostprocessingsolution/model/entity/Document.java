@@ -8,11 +8,9 @@ import com.synechisveltiosi.documentpostprocessingsolution.model.embed.PrintOpti
 import com.synechisveltiosi.documentpostprocessingsolution.model.enums.PayloadStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -47,4 +45,25 @@ public class Document extends BaseEntity implements Serializable {
     @Convert(converter = DocumentPayloadConverter.class)
     private DocumentParser payload;
 
+    public Document(Document other){
+        this.id = other.id;
+        this.agentNumber = other.agentNumber;
+        this.requestorId = other.requestorId;
+        this.distributionBranch = other.distributionBranch;
+        this.accountNumber = other.accountNumber;
+        this.policyNumber = other.policyNumber;
+        this.stackName = other.stackName;
+        this.recipient = other.recipient;
+        this.timestamp = other.timestamp;
+        this.payloadStatus = other.payloadStatus;
+        this.printOption = other.printOption;
+        this.address = other.address;
+        this.payload = other.payload;
+        this.createdAt = other.createdAt;
+        this.updatedAt = other.updatedAt;
+    }
+
+    public static Document copyOf(Document other){
+        return new Document(other);
+    }
 }
